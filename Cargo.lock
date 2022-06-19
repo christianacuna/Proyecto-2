@@ -84,6 +84,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "qr_fs"
+version = "0.1.0"
+dependencies = [
+ "bincode",
+ "fuse",
+ "libc",
+ "serde",
+ "serde-big-array",
+ "time",
+]
+
+[[package]]
 name = "quote"
 version = "0.6.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -97,18 +109,6 @@ name = "redox_syscall"
 version = "0.1.54"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "12229c14a0f65c4f1cb046a3b52047cdd9da1f4b30f8a39c5063c8bae515e252"
-
-[[package]]
-name = "risos_fs"
-version = "0.1.0"
-dependencies = [
- "bincode",
- "fuse",
- "libc",
- "serde",
- "serde-big-array",
- "time",
-]
 
 [[package]]
 name = "serde"

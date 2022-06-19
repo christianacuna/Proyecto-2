@@ -1,7 +1,7 @@
 [package]
-name = "risos_fs"
+name = "qr_fs"
 version = "0.1.0"
-authors = ["Gustavo Murayama <gmurayama@outlook.com>", "Lucas Tornai de Carvalho <lucastornai00@gmail.com>"]
+authors = []
 edition = "2018"
 
 [dependencies]

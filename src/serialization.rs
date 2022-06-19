@@ -3,7 +3,7 @@ use fuse::{FileAttr, FileType};
 use time::Timespec;
 
 
-// Mostra para o pacote serde como serializar as structs internas da struct FileAttr
+// Muestre al paquete de serde cómo serializar las estructuras internas de la estructura FileAttr
 
 #[derive(Serialize, Deserialize)]
 #[serde(remote = "Timespec")]

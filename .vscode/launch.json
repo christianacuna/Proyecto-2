@@ -7,15 +7,15 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug executable 'risos_fs'",
+            "name": "Debug executable 'qr_fs'",
             "cargo": {
                 "args": [
                     "build",
-                    "--bin=risos_fs",
-                    "--package=risos_fs"
+                    "--bin=qr_fs",
+                    "--package=qr_fs"
                 ],
                 "filter": {
-                    "name": "risos_fs",
+                    "name": "qr_fs",
                     "kind": "bin"
                 }
             },
@@ -25,16 +25,16 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in executable 'risos_fs'",
+            "name": "Debug unit tests in executable 'qr_fs'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
-                    "--bin=risos_fs",
-                    "--package=risos_fs"
+                    "--bin=qr_fs",
+                    "--package=qr_fs"
                 ],
                 "filter": {
-                    "name": "risos_fs",
+                    "name": "qr_fs",
                     "kind": "bin"
                 }
             },

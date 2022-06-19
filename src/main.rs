@@ -31,7 +31,7 @@ impl QrFS {
         }
     }
 }
-
+#[allow(unused_must_use)]
 impl Drop for QrFS {
     fn drop(&mut self) {
         println!("\nsaving content...");
