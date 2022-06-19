@@ -173,7 +173,7 @@ impl Disk {
         let index = (ino as usize) - 1;
         match &self.super_block[index] {
             Some(inode) => inode.references.iter().position(|r| r == &None),
-            None => panic!("Intento de memoria inválido")
+            None => panic!("Intento de accesso a memoria inválido")
         }
     }
 
