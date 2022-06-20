@@ -1,0 +1,1 @@
+/home/estudiante/Documentos/Sistemas\ Operativos/Proyecto\ 2/mount/target/debug/mount_qrfs: /home/estudiante/Documentos/Sistemas\ Operativos/Proyecto\ 2/mount/src/main.rs /home/estudiante/Documentos/Sistemas\ Operativos/Proyecto\ 2/mount/src/persistencia.rs /home/estudiante/Documentos/Sistemas\ Operativos/Proyecto\ 2/mount/src/serialization.rs
