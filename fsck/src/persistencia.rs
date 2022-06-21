@@ -12,15 +12,17 @@ use fuse::{FileType};//Libreria para el manejo del FileSytem en User Space
 
 big_array! { BigArray; }
 // Estructura para el disco virtual
+#[derive(Debug)]
 #[allow(dead_code)]
 pub struct Disk {
-    super_block: Box<[Option<Inode>]>,
-    memory_blocks: Box<[MemoryBlock]>,
-    max_files: usize,
-    block_size: usize,
-    root_path: String
+    pub super_block: Box<[Option<Inode>]>,
+    pub memory_blocks: Box<[MemoryBlock]>,
+    pub max_files: usize,
+    pub block_size: usize,
+    pub root_path: String
 }
 // Estructura de los i-nodes
+#[derive(Debug)]
 #[derive(Serialize, Deserialize)]
 pub struct Inode {
     #[serde(with = "BigArray")]
@@ -30,7 +32,7 @@ pub struct Inode {
     #[serde(with = "BigArray")]
     pub references: [Option<usize>; 128]
 }
-
+#[derive(Debug)]
 #[derive(Serialize, Deserialize)]
 pub struct MemoryBlock {
     data: Option<Box<[u8]>>
@@ -80,7 +82,7 @@ impl Disk {
                 Vec::new()
             };
 
-            // Si la cantidad de bloques en el disco existente es mayor que la del disco a crear, la ejecución finaliza
+            // Si la cantidad de bloques en MemoryBlockel disco existente es mayor que la del disco a crear, la ejecución finaliza
             if memory_block_quantity < memory_blocks.len() {
                 panic!("¡El disco existente es más grande que el disco actual! ¡Intenta arrancar con un disco de mayor tamaño!");
             }
@@ -135,7 +137,7 @@ impl Disk {
         println!("\nTamaño del disco: {} KB", memory_size_in_bytes / 1024);
         println!("Tamaño del bloque de memoria {} KB", block_size / 1024);
         println!("Número máximo de archivos (Inode {} bytes): {}", inode_size, max_files);
-
+        //println!("{:?}",memory_blocks);
         Disk {
             memory_blocks: memory_blocks.into_boxed_slice(),
             super_block: super_block.into_boxed_slice(),

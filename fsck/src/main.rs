@@ -20,6 +20,11 @@ use std::ffi::OsStr;
 use crate::persistencia::{Disk, Inode};
 // Libreria para verificar si un archivo existe
 use std::path::Path;
+use std::{
+    fs::File,
+    io::{BufWriter, Write},
+};
+
 
 struct QrFS {
     disk: Disk
@@ -441,7 +446,7 @@ impl Filesystem for QrFS {
         }
     }
 }
-
+#[allow(unused_must_use)]
 fn main() {
     let mountpoint = match env::args().nth(1) {
         Some(path) => path,
@@ -452,6 +457,7 @@ fn main() {
     };
     let disk_file_path = format!("{}/disco.qrfs",  mountpoint);
     let inode_table_file_path = format!("{}/inode.qrfs",  mountpoint);
+    let document_file_path = format!("{}/disco.txt",  mountpoint);
     if !(Path::new(&disk_file_path).exists()){
         println!("No se encuentra el disco del filesystem")
     }
@@ -459,9 +465,14 @@ fn main() {
         println!("No se encuentra el i-node del filesytem")
         
     } else{
-        QrFS::new(mountpoint.clone());
+        let l = QrFS::new(mountpoint.clone());
+        let write_file = File::create(document_file_path).unwrap();
+        let mut writer = BufWriter::new(&write_file);
+
         println!("QrFS Valido!");
+        write!(&mut writer, "{:?}", l.disk);
     }
+    
     //fuse::mount(fs, &mountpoint, &options).unwrap();
     
 }
