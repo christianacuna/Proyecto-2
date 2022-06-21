@@ -1,0 +1,11 @@
+/home/estudiante/Documentos/Sistemas Operativos/Proyecto 2/fsck/target/debug/deps/approx-9b3daaa6c550be9e.rmeta: /home/estudiante/.cargo/registry/src/github.com-1ecc6299db9ec823/approx-0.5.1/src/lib.rs /home/estudiante/.cargo/registry/src/github.com-1ecc6299db9ec823/approx-0.5.1/src/abs_diff_eq.rs /home/estudiante/.cargo/registry/src/github.com-1ecc6299db9ec823/approx-0.5.1/src/relative_eq.rs /home/estudiante/.cargo/registry/src/github.com-1ecc6299db9ec823/approx-0.5.1/src/ulps_eq.rs /home/estudiante/.cargo/registry/src/github.com-1ecc6299db9ec823/approx-0.5.1/src/macros.rs
+
+/home/estudiante/Documentos/Sistemas Operativos/Proyecto 2/fsck/target/debug/deps/libapprox-9b3daaa6c550be9e.rlib: /home/estudiante/.cargo/registry/src/github.com-1ecc6299db9ec823/approx-0.5.1/src/lib.rs /home/estudiante/.cargo/registry/src/github.com-1ecc6299db9ec823/approx-0.5.1/src/abs_diff_eq.rs /home/estudiante/.cargo/registry/src/github.com-1ecc6299db9ec823/approx-0.5.1/src/relative_eq.rs /home/estudiante/.cargo/registry/src/github.com-1ecc6299db9ec823/approx-0.5.1/src/ulps_eq.rs /home/estudiante/.cargo/registry/src/github.com-1ecc6299db9ec823/approx-0.5.1/src/macros.rs
+
+/home/estudiante/Documentos/Sistemas Operativos/Proyecto 2/fsck/target/debug/deps/approx-9b3daaa6c550be9e.d: /home/estudiante/.cargo/registry/src/github.com-1ecc6299db9ec823/approx-0.5.1/src/lib.rs /home/estudiante/.cargo/registry/src/github.com-1ecc6299db9ec823/approx-0.5.1/src/abs_diff_eq.rs /home/estudiante/.cargo/registry/src/github.com-1ecc6299db9ec823/approx-0.5.1/src/relative_eq.rs /home/estudiante/.cargo/registry/src/github.com-1ecc6299db9ec823/approx-0.5.1/src/ulps_eq.rs /home/estudiante/.cargo/registry/src/github.com-1ecc6299db9ec823/approx-0.5.1/src/macros.rs
+
+/home/estudiante/.cargo/registry/src/github.com-1ecc6299db9ec823/approx-0.5.1/src/lib.rs:
+/home/estudiante/.cargo/registry/src/github.com-1ecc6299db9ec823/approx-0.5.1/src/abs_diff_eq.rs:
+/home/estudiante/.cargo/registry/src/github.com-1ecc6299db9ec823/approx-0.5.1/src/relative_eq.rs:
+/home/estudiante/.cargo/registry/src/github.com-1ecc6299db9ec823/approx-0.5.1/src/ulps_eq.rs:
+/home/estudiante/.cargo/registry/src/github.com-1ecc6299db9ec823/approx-0.5.1/src/macros.rs:

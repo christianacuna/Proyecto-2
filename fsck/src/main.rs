@@ -1,6 +1,7 @@
 extern crate fuse;
 #[macro_use]
 extern crate serde_big_array;
+extern crate image;
 mod persistencia;
 mod serialization;
 
@@ -22,9 +23,11 @@ use crate::persistencia::{Disk, Inode};
 use std::path::Path;
 use std::{
     fs::File,
-    io::{BufWriter, Write},
+    io::{BufWriter, Write, Read},
 };
-
+use std::fs;
+use qrcode_generator::QrCodeEcc;
+use image::{ImageFormat};
 
 struct QrFS {
     disk: Disk
@@ -446,6 +449,14 @@ impl Filesystem for QrFS {
         }
     }
 }
+fn get_file_as_byte_vec(filename: &String) -> Vec<u8> {
+    let mut f = File::open(&filename).expect("no file found");
+    let metadata = fs::metadata(&filename).expect("unable to read metadata");
+    let mut buffer = vec![0; metadata.len() as usize];
+    f.read(&mut buffer).expect("buffer overflow");
+
+    buffer
+}
 #[allow(unused_must_use)]
 fn main() {
     let mountpoint = match env::args().nth(1) {
@@ -458,6 +469,8 @@ fn main() {
     let disk_file_path = format!("{}/disco.qrfs",  mountpoint);
     let inode_table_file_path = format!("{}/inode.qrfs",  mountpoint);
     let document_file_path = format!("{}/disco.txt",  mountpoint);
+    let qrcode_file_path = format!("{}/disco.png",mountpoint);
+    let qrcode_file_path2 = format!("{}/inode.png",mountpoint);
     if !(Path::new(&disk_file_path).exists()){
         println!("No se encuentra el disco del filesystem")
     }
@@ -466,13 +479,35 @@ fn main() {
         
     } else{
         let l = QrFS::new(mountpoint.clone());
-        let write_file = File::create(document_file_path).unwrap();
+        let write_file = File::create(document_file_path.clone()).unwrap();
         let mut writer = BufWriter::new(&write_file);
 
         println!("QrFS Valido!");
+        println!("Creando el archivo imprimible");
         write!(&mut writer, "{:?}", l.disk);
+        let contents = get_file_as_byte_vec(&disk_file_path);
+        let contents2 = get_file_as_byte_vec(&inode_table_file_path);
+        let result: Vec<u8> = qrcode_generator::to_png_to_vec(contents, QrCodeEcc::Low, 1024).unwrap();
+        let result2: Vec<u8> = qrcode_generator::to_png_to_vec(contents2, QrCodeEcc::Low, 1024).unwrap();
+        //println!("{:?}", result);
+        match image::load_from_memory_with_format(&result, ImageFormat::Png) {
+            Ok(_img) => {
+                println!("Creando el Codigo QR para el Disco");
+                std::fs::write(qrcode_file_path, result).unwrap();
+            }
+            Err(_) => {
+                println!("input is not png");
+            }
+        }
+        match image::load_from_memory_with_format(&result2, ImageFormat::Png) {
+            Ok(_img) => {
+                println!("Creando el Codigo QR para la tabla I-Node");
+                std::fs::write(qrcode_file_path2, result2).unwrap();
+            }
+            Err(_) => {
+                println!("input is not png");
+            }
+        }
     }
-    
-    //fuse::mount(fs, &mountpoint, &options).unwrap();
     
 }
