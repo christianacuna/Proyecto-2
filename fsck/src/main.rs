@@ -21,12 +21,16 @@ use std::ffi::OsStr;
 use crate::persistencia::{Disk, Inode};
 // Libreria para verificar si un archivo existe
 use std::path::Path;
+// Libreria standard para escribir y leer archivos binarios
 use std::{
     fs::File,
     io::{BufWriter, Write, Read},
 };
+//Libreria para el manejo del file system 
 use std::fs;
+//Libreria para el manejo de la conversion de Vectores a un formato codigo QR
 use qrcode_generator::QrCodeEcc;
+//Libreria para el manejo de la conversion del Codigo QR a imagen
 use image::{ImageFormat};
 
 struct QrFS {
@@ -48,6 +52,7 @@ impl QrFS {
         }
     }
 }
+//En caso de desmontar el file system se ejecuta esta funcion.
 #[allow(unused_must_use)]
 impl Drop for QrFS {
     fn drop(&mut self) {
@@ -79,7 +84,7 @@ impl Filesystem for QrFS {
             None => reply.error(ENOENT) // “No such file or directory.”
         }
     }
-
+    //Implementacion para cuando se ejecute un create en el filesystem
     fn create(
         &mut self, 
         _req: &Request, 
@@ -153,7 +158,7 @@ impl Filesystem for QrFS {
 
         reply.created(&ts, &attr, 1, ino_available, flags)
     }
-
+    // Esta funcion se encarga de sincronizar un archivo en el estado del núcleo con el dispositivo de almacenamiento
     fn fsync(
         &mut self, 
         _req: &Request, 
@@ -165,7 +170,7 @@ impl Filesystem for QrFS {
         println!("fsync(ino={}, fh={}, datasync={})", ino, fh, datasync);
         reply.error(ENOSYS);
     }
-
+    // Funcion se encarga de aplicar los atributos a un archivo
     fn setattr(
         &mut self, 
         _req: &Request, 
@@ -203,7 +208,7 @@ impl Filesystem for QrFS {
             None => reply.error(ENOENT)
         }
     }
-
+    // Esta funcion se encarga de obtener los atributos de un archivo
     fn getattr(
         &mut self,
         _req: &Request,
@@ -220,7 +225,7 @@ impl Filesystem for QrFS {
             None => reply.error(ENOENT)
         }
     }
-
+    // Esta funcion se encarga de crear un directorio nuevo
     fn mkdir(
         &mut self, 
         _req: &Request, 
@@ -278,7 +283,7 @@ impl Filesystem for QrFS {
             None => { println!("¡Límite de archivos dentro de la carpeta alcanzado!"); reply.error(EIO); }
         }
     }
-
+    // Esta funcion se encarga de eliminar un directorio
     fn rmdir(
         &mut self, 
         _req: &Request, 
@@ -288,7 +293,7 @@ impl Filesystem for QrFS {
     ) {
         let name = name.to_str().unwrap();
         let inode = self.disk.find_inode_in_references_by_name(parent, name);
-
+        // Eliminamos el directorio de la tabla de inodos
         match inode {
             Some(inode) => {
                 let ino = inode.attributes.ino;
@@ -300,7 +305,7 @@ impl Filesystem for QrFS {
             None => reply.error(EIO) // "Input/output error."
         }
     }
-
+    // Esta funcion se encarga de abrir un archivo o directorio
     fn open(
         &mut self,
         _req: &Request,
@@ -309,7 +314,7 @@ impl Filesystem for QrFS {
         reply: ReplyOpen
     ) {
         println!("open(ino={}, flags={})", ino, flags);
-
+        // Buscamos el inodo 
         let inode = self.disk.get_inode(ino);
 
         match inode {
@@ -317,7 +322,7 @@ impl Filesystem for QrFS {
             None => reply.error(ENOSYS)
         }
     }
-
+    // Esta funcion se encarga de leer un archivo 
     fn read(
         &mut self, 
         _req: &Request, 
@@ -336,7 +341,7 @@ impl Filesystem for QrFS {
             None => reply.error(EIO)
         }
     }
-
+    // Esta funcion se encarga de leer un directorio
     fn readdir(
         &mut self, 
         _req: &Request, 
@@ -393,7 +398,7 @@ impl Filesystem for QrFS {
             None => { println!("ERROR ino={:?}", ino); reply.error(ENOENT) }
         }
     }
-
+    // Esta funcion se encarga de escribir datos
     fn write(
         &mut self, 
         _req: &Request, 
@@ -407,7 +412,7 @@ impl Filesystem for QrFS {
         println!("write(ino={}, offset={}, data={})", ino, offset, data.len());
         let inode = self.disk.get_inode_as_mut(ino);
         let content: Box<[u8]> = data.to_vec().into_boxed_slice();
-
+        // Buscamos el inode y le empezamos a escribir los bytes al disko
         match inode {
             Some(inode) => {
                 inode.attributes.size = data.len() as u64;
@@ -421,7 +426,7 @@ impl Filesystem for QrFS {
             }
         }
     }
-
+    // Esta funcion se encarga de eliminar un archivo
     fn unlink(
         &mut self, 
         _req: &Request, 
@@ -431,7 +436,7 @@ impl Filesystem for QrFS {
     ) {
         let name = name.to_str().unwrap();
         let inode = self.disk.find_inode_in_references_by_name(parent, name);
-
+        // Buscamos el inode y lo eliminamos de la tabla, y tambien borramos los datos del disco
         match inode {
             Some(inode) => {
                 if inode.attributes.kind == FileType::Directory {
@@ -449,6 +454,7 @@ impl Filesystem for QrFS {
         }
     }
 }
+// Esta funcion se encarga de obtener los bits de un archivo y ponerlos en una structura Vectorial
 fn get_file_as_byte_vec(filename: &String) -> Vec<u8> {
     let mut f = File::open(&filename).expect("no file found");
     let metadata = fs::metadata(&filename).expect("unable to read metadata");
@@ -471,6 +477,7 @@ fn main() {
     let document_file_path = format!("{}/disco.txt",  mountpoint);
     let qrcode_file_path = format!("{}/disco.png",mountpoint);
     let qrcode_file_path2 = format!("{}/inode.png",mountpoint);
+
     if !(Path::new(&disk_file_path).exists()){
         println!("No se encuentra el disco del filesystem")
     }
@@ -487,8 +494,10 @@ fn main() {
         write!(&mut writer, "{:?}", l.disk);
         let contents = get_file_as_byte_vec(&disk_file_path);
         let contents2 = get_file_as_byte_vec(&inode_table_file_path);
+        
         let result: Vec<u8> = qrcode_generator::to_png_to_vec(contents, QrCodeEcc::Low, 1024).unwrap();
         let result2: Vec<u8> = qrcode_generator::to_png_to_vec(contents2, QrCodeEcc::Low, 1024).unwrap();
+        
         //println!("{:?}", result);
         match image::load_from_memory_with_format(&result, ImageFormat::Png) {
             Ok(_img) => {
@@ -508,6 +517,5 @@ fn main() {
                 println!("input is not png");
             }
         }
-    }
-    
+    }   
 }

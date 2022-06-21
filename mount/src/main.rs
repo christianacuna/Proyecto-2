@@ -69,7 +69,7 @@ impl Filesystem for QrFS {
             None => reply.error(ENOENT) // “No such file or directory.”
         }
     }
-
+    //Implementacion para cuando se ejecute un create en el filesystem
     fn create(
         &mut self, 
         _req: &Request, 
@@ -143,7 +143,7 @@ impl Filesystem for QrFS {
 
         reply.created(&ts, &attr, 1, ino_available, flags)
     }
-
+    // Esta funcion se encarga de sincronizar un archivo en el estado del núcleo con el dispositivo de almacenamiento
     fn fsync(
         &mut self, 
         _req: &Request, 
@@ -155,7 +155,7 @@ impl Filesystem for QrFS {
         println!("fsync(ino={}, fh={}, datasync={})", ino, fh, datasync);
         reply.error(ENOSYS);
     }
-
+    // Funcion se encarga de aplicar los atributos a un archivo
     fn setattr(
         &mut self, 
         _req: &Request, 
@@ -193,7 +193,7 @@ impl Filesystem for QrFS {
             None => reply.error(ENOENT)
         }
     }
-
+    // Esta funcion se encarga de obtener los atributos de un archivo
     fn getattr(
         &mut self,
         _req: &Request,
@@ -210,7 +210,7 @@ impl Filesystem for QrFS {
             None => reply.error(ENOENT)
         }
     }
-
+    // Esta funcion se encarga de crear un directorio nuevo
     fn mkdir(
         &mut self, 
         _req: &Request, 
@@ -268,7 +268,7 @@ impl Filesystem for QrFS {
             None => { println!("¡Límite de archivos dentro de la carpeta alcanzado!"); reply.error(EIO); }
         }
     }
-
+    // Esta funcion se encarga de eliminar un directorio
     fn rmdir(
         &mut self, 
         _req: &Request, 
@@ -278,7 +278,7 @@ impl Filesystem for QrFS {
     ) {
         let name = name.to_str().unwrap();
         let inode = self.disk.find_inode_in_references_by_name(parent, name);
-
+        // Eliminamos el directorio de la tabla de inodos
         match inode {
             Some(inode) => {
                 let ino = inode.attributes.ino;
@@ -290,7 +290,7 @@ impl Filesystem for QrFS {
             None => reply.error(EIO) // "Input/output error."
         }
     }
-
+    // Esta funcion se encarga de abrir un archivo o directorio
     fn open(
         &mut self,
         _req: &Request,
@@ -299,7 +299,7 @@ impl Filesystem for QrFS {
         reply: ReplyOpen
     ) {
         println!("open(ino={}, flags={})", ino, flags);
-
+        // Buscamos el inodo 
         let inode = self.disk.get_inode(ino);
 
         match inode {
@@ -307,7 +307,7 @@ impl Filesystem for QrFS {
             None => reply.error(ENOSYS)
         }
     }
-
+    // Esta funcion se encarga de leer un archivo 
     fn read(
         &mut self, 
         _req: &Request, 
@@ -326,7 +326,7 @@ impl Filesystem for QrFS {
             None => reply.error(EIO)
         }
     }
-
+    // Esta funcion se encarga de leer un directorio
     fn readdir(
         &mut self, 
         _req: &Request, 
@@ -383,7 +383,7 @@ impl Filesystem for QrFS {
             None => { println!("ERROR ino={:?}", ino); reply.error(ENOENT) }
         }
     }
-
+    // Esta funcion se encarga de escribir datos
     fn write(
         &mut self, 
         _req: &Request, 
@@ -397,7 +397,7 @@ impl Filesystem for QrFS {
         println!("write(ino={}, offset={}, data={})", ino, offset, data.len());
         let inode = self.disk.get_inode_as_mut(ino);
         let content: Box<[u8]> = data.to_vec().into_boxed_slice();
-
+        // Buscamos el inode y le empezamos a escribir los bytes al disko
         match inode {
             Some(inode) => {
                 inode.attributes.size = data.len() as u64;
@@ -411,7 +411,7 @@ impl Filesystem for QrFS {
             }
         }
     }
-
+    // Esta funcion se encarga de eliminar un archivo
     fn unlink(
         &mut self, 
         _req: &Request, 
@@ -421,7 +421,7 @@ impl Filesystem for QrFS {
     ) {
         let name = name.to_str().unwrap();
         let inode = self.disk.find_inode_in_references_by_name(parent, name);
-
+        // Buscamos el inode y lo eliminamos de la tabla, y tambien borramos los datos del disco
         match inode {
             Some(inode) => {
                 if inode.attributes.kind == FileType::Directory {
