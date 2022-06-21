@@ -4,12 +4,19 @@ extern crate serde_big_array;
 mod persistencia;
 mod serialization;
 
+// Libreria para el manejo del file system en el user space
 use fuse::{Filesystem, Request, ReplyCreate, ReplyEmpty, ReplyAttr, ReplyEntry, ReplyOpen, ReplyData, ReplyDirectory, ReplyWrite, FileType, FileAttr};
+// Libreria para el manejo de banderas del codigo en C
 use libc::{ENOSYS, ENOENT, EIO, EISDIR, ENOSPC};
+// Liberia para obtener el tiempo
 use time::{Timespec};
+// Libreria para obtener el ambiente de ejecucion
 use std::env;
+// Libreria para el manejo de memoria
 use std::mem;
+// Libreria para obtener el mejor manejo de strings de nuestro sistema operativo
 use std::ffi::OsStr;
+// Libreria para la implementacion de nuestra persistencia
 use crate::persistencia::{Disk, Inode};
 
 struct QrFS {

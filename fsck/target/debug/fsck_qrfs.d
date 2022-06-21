@@ -1,0 +1,1 @@
+/home/estudiante/Documentos/Sistemas\ Operativos/Proyecto\ 2/fsck/target/debug/fsck_qrfs: /home/estudiante/Documentos/Sistemas\ Operativos/Proyecto\ 2/fsck/src/main.rs /home/estudiante/Documentos/Sistemas\ Operativos/Proyecto\ 2/fsck/src/persistencia.rs /home/estudiante/Documentos/Sistemas\ Operativos/Proyecto\ 2/fsck/src/serialization.rs

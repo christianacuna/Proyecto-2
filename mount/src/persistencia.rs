@@ -51,8 +51,8 @@ impl Disk {
         let inode_size = mem::size_of::<Box<[Inode]>>() + mem::size_of::<Inode>();
         let max_files = block_size / inode_size;
 
-        let disk_file_path = format!("{}/.disco.qrfs", &root_path);
-        let inode_table_file_path = format!("{}/.inode.qrfs", &root_path);
+        let disk_file_path = format!("{}/disco.qrfs", &root_path);
+        let inode_table_file_path = format!("{}/inode.qrfs", &root_path);
 
         // Intente leer el archivo del disco, si no existe, crea uno nuevo
         let mut memory_blocks: Vec<MemoryBlock>;
@@ -346,7 +346,7 @@ impl Disk {
                 return;
             },
             Ok(v) => {
-                let inode_file = format!("{}/.inode.qrfs", &self.root_path);
+                let inode_file = format!("{}/inode.qrfs", &self.root_path);
                 let mut inode_file = OpenOptions::new().write(true).open(inode_file).unwrap();
                 match inode_file.write(&v) {
                     Err(e) => {
@@ -364,7 +364,7 @@ impl Disk {
                 return;
             },
             Ok(v) => {
-                let disk_file = format!("{}/.disco.qrfs", &self.root_path);
+                let disk_file = format!("{}/disco.qrfs", &self.root_path);
                 let mut disk_file = OpenOptions::new().write(true).open(disk_file).unwrap();
                 match disk_file.write(&v) {
                     Err(e) => {
