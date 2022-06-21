@@ -450,9 +450,18 @@ fn main() {
             return;
         }
     };
-    
-    QrFS::new(mountpoint.clone());
-    println!("QrFS Valido!");
+    let disk_file_path = format!("{}/disco.qrfs",  mountpoint);
+    let inode_table_file_path = format!("{}/inode.qrfs",  mountpoint);
+    if !(Path::new(&disk_file_path).exists()){
+        println!("No se encuentra el disco del filesystem")
+    }
+    else if !(Path::new(&inode_table_file_path).exists()){
+        println!("No se encuentra el i-node del filesytem")
+        
+    } else{
+        QrFS::new(mountpoint.clone());
+        println!("QrFS Valido!");
+    }
     //fuse::mount(fs, &mountpoint, &options).unwrap();
     
 }
