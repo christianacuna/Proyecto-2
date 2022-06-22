@@ -18,6 +18,12 @@ use std::mem;
 use std::ffi::OsStr;
 // Libreria para la implementacion de nuestra persistencia
 use crate::persistencia::{Disk, Inode};
+// Libreria standard para escribir y leer archivos binarios
+use std::{
+    io::{ Write,stdin,stdout},
+};
+// Libreria para verificar si un archivo existe
+use std::path::Path;
 
 struct QrFS {
     disk: Disk
@@ -448,14 +454,37 @@ fn main() {
             return;
         }
     };
+    // guardamos los pathfile defaults obtenidos con el mountpoint
+    let disk_file_path = format!("{}/disco.qrfs",  mountpoint);
+    let inode_table_file_path = format!("{}/inode.qrfs",  mountpoint);
 
-    let fs = QrFS::new(mountpoint.clone(),"".to_string().clone());
+    // Pregunta si un archivo existe, si no retorna
+    if !(Path::new(&disk_file_path).exists()){
+        println!("No se encuentra el disco del filesystem")
+    }
+    else if !(Path::new(&inode_table_file_path).exists()){
+        println!("No se encuentra el i-node del filesytem")
+        
+    } else{
+        let mut s=String::new();
+        print!("Please enter your phrase: ");
+        let _=stdout().flush();
+        stdin().read_line(&mut s).expect("Did not enter a correct string");
+        if let Some('\n')=s.chars().next_back() {
+            s.pop();
+        }
+        if let Some('\r')=s.chars().next_back() {
+            s.pop();
+        }
 
-    let options = ["-o", "nonempty"]
-        .iter()
-        .map(|o| o.as_ref())
-        .collect::<Vec<&OsStr>>();
+        let fs = QrFS::new(mountpoint.clone(),s.clone());
 
-    println!("QrFS started!");
-    fuse::mount(fs, &mountpoint, &options).unwrap();
+        let options = ["-o", "nonempty"]
+            .iter()
+            .map(|o| o.as_ref())
+            .collect::<Vec<&OsStr>>();
+
+        println!("QrFS started!");
+        fuse::mount(fs, &mountpoint, &options).unwrap();
+    }
 }
