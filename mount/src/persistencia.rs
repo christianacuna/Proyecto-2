@@ -17,7 +17,8 @@ pub struct Disk {
     memory_blocks: Box<[MemoryBlock]>,
     max_files: usize,
     block_size: usize,
-    root_path: String
+    root_path: String,
+    phrase: String
 }
 
 #[derive(Serialize, Deserialize)]
@@ -42,7 +43,8 @@ impl Disk {
     pub fn new(
         root_path: String,
         memory_size_in_bytes: usize,
-        block_size: usize
+        block_size: usize,
+        phrase: String
     ) -> Disk {
         // Número de bloques de memoria
         // El -1 se refiere al "superbloque", que tiene el mismo tamaño que un MemoryBlock
@@ -140,7 +142,8 @@ impl Disk {
             super_block: super_block.into_boxed_slice(),
             max_files,
             block_size,
-            root_path
+            root_path,
+            phrase
         }
     }
 

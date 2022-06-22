@@ -26,12 +26,12 @@ struct QrFS {
 impl QrFS {
     /// Inicializa FS con el tamaño especificado en `memory_size` con bloques de memoria de tamaño    
     /// `block_size`.
-    fn new(root_path: String) -> Self {
+    fn new(root_path: String,phrase: String) -> Self {
         let max_files: usize = 1024;
         let memory_size: usize = 1024 * 1024 * 1024;
         let block_size: usize = max_files * (mem::size_of::<Box<[Inode]>>() + mem::size_of::<Inode>());
 
-        let disk = Disk::new(root_path, memory_size, block_size);
+        let disk = Disk::new(root_path, memory_size, block_size,phrase);
 
         QrFS {
             disk
@@ -449,7 +449,7 @@ fn main() {
         }
     };
 
-    let fs = QrFS::new(mountpoint.clone());
+    let fs = QrFS::new(mountpoint.clone(),"".to_string().clone());
 
     let options = ["-o", "nonempty"]
         .iter()

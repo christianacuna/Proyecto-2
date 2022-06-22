@@ -19,7 +19,8 @@ pub struct Disk {
     pub memory_blocks: Box<[MemoryBlock]>,
     pub max_files: usize,
     pub block_size: usize,
-    pub root_path: String
+    pub root_path: String,
+    phrase: String
 }
 // Estructura de los i-nodes
 #[derive(Debug)]
@@ -45,7 +46,8 @@ impl Disk {
     pub fn new(
         root_path: String,
         memory_size_in_bytes: usize,
-        block_size: usize
+        block_size: usize,
+        phrase: String
     ) -> Disk {
         // Número de bloques de memoria
         // El -1 se refiere al "superbloque", que tiene el mismo tamaño que un MemoryBlock
@@ -143,7 +145,8 @@ impl Disk {
             super_block: super_block.into_boxed_slice(),
             max_files,
             block_size,
-            root_path
+            root_path,
+            phrase
         }
     }
 

@@ -24,7 +24,7 @@ use std::path::Path;
 // Libreria standard para escribir y leer archivos binarios
 use std::{
     fs::File,
-    io::{BufWriter, Write, Read},
+    io::{BufWriter, Write, Read,stdin,stdout},
 };
 //Libreria para el manejo del file system 
 use std::fs;
@@ -40,12 +40,13 @@ struct QrFS {
 impl QrFS {
     /// Inicializa FS con el tamaño especificado en `memory_size` con bloques de memoria de tamaño    
     /// `block_size`.
-    fn new(root_path: String) -> Self {
+    fn new(root_path: String, phrase: String) -> Self {
         let max_files: usize = 1024;
         let memory_size: usize = 1024 * 1024 * 1024;
+        //let memory_size: usize = 1024 * 1024 * 1024;
         let block_size: usize = max_files * (mem::size_of::<Box<[Inode]>>() + mem::size_of::<Inode>());
 
-        let disk = Disk::new(root_path, memory_size, block_size);
+        let disk = Disk::new(root_path, memory_size, block_size, phrase);
 
         QrFS {
             disk
@@ -116,7 +117,7 @@ impl Filesystem for QrFS {
         let memory_block_index = memory_block_index.unwrap();
 
         let ts = time::now().to_timespec();
-
+        // Guardamos los atributos en una variable
         let attr = FileAttr {
             ino: ino_available,
             size: 0,
@@ -465,6 +466,7 @@ fn get_file_as_byte_vec(filename: &String) -> Vec<u8> {
 }
 #[allow(unused_must_use)]
 fn main() {
+    //Obtiene el pathfile donde se encuentra el file system
     let mountpoint = match env::args().nth(1) {
         Some(path) => path,
         None => {
@@ -472,12 +474,14 @@ fn main() {
             return;
         }
     };
+    // guardamos los pathfile defaults obtenidos con el mountpoint
     let disk_file_path = format!("{}/disco.qrfs",  mountpoint);
     let inode_table_file_path = format!("{}/inode.qrfs",  mountpoint);
     let document_file_path = format!("{}/disco.txt",  mountpoint);
     let qrcode_file_path = format!("{}/disco.png",mountpoint);
     let qrcode_file_path2 = format!("{}/inode.png",mountpoint);
 
+    // Pregunta si un archivo existe, si no retorna
     if !(Path::new(&disk_file_path).exists()){
         println!("No se encuentra el disco del filesystem")
     }
@@ -485,7 +489,18 @@ fn main() {
         println!("No se encuentra el i-node del filesytem")
         
     } else{
-        let l = QrFS::new(mountpoint.clone());
+        let mut s=String::new();
+        print!("Please enter your phrase: ");
+        let _=stdout().flush();
+        stdin().read_line(&mut s).expect("Did not enter a correct string");
+        if let Some('\n')=s.chars().next_back() {
+            s.pop();
+        }
+        if let Some('\r')=s.chars().next_back() {
+            s.pop();
+        }
+
+        let l = QrFS::new(mountpoint.clone(),s.clone());
         let write_file = File::create(document_file_path.clone()).unwrap();
         let mut writer = BufWriter::new(&write_file);
 
@@ -495,10 +510,12 @@ fn main() {
         let contents = get_file_as_byte_vec(&disk_file_path);
         let contents2 = get_file_as_byte_vec(&inode_table_file_path);
         
+        // Generamos un vector de u8 con los datos del codigo QR, utilizando los datos de cada archivo
         let result: Vec<u8> = qrcode_generator::to_png_to_vec(contents, QrCodeEcc::Low, 1024).unwrap();
         let result2: Vec<u8> = qrcode_generator::to_png_to_vec(contents2, QrCodeEcc::Low, 1024).unwrap();
         
         //println!("{:?}", result);
+        // Guardamos los vectores de u8 en archivos de formato imagen
         match image::load_from_memory_with_format(&result, ImageFormat::Png) {
             Ok(_img) => {
                 println!("Creando el Codigo QR para el Disco");

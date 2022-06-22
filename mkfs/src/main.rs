@@ -18,6 +18,7 @@ use std::mem;
 use std::ffi::OsStr;
 // Libreria para la implementacion de nuestra persistencia
 use crate::persistencia::{Disk, Inode};
+use std::io::{stdin,stdout,Write};
 
 struct QrFS {
     disk: Disk
@@ -26,12 +27,12 @@ struct QrFS {
 impl QrFS {
     /// Inicializa FS con el tamaño especificado en `memory_size` con bloques de memoria de tamaño    
     /// `block_size`.
-    fn new(root_path: String) -> Self {
+    fn new(root_path: String, phrase: String) -> Self {
         let max_files: usize = 1024;
         let memory_size: usize = 1024 * 1024 * 1024;
         let block_size: usize = max_files * (mem::size_of::<Box<[Inode]>>() + mem::size_of::<Inode>());
 
-        let disk = Disk::new(root_path, memory_size, block_size);
+        let disk = Disk::new(root_path, memory_size, block_size, phrase);
 
         QrFS {
             disk
@@ -448,6 +449,16 @@ fn main() {
             return;
         }
     };
+    let mut s=String::new();
+    print!("Please enter your phrase: ");
+    let _=stdout().flush();
+    stdin().read_line(&mut s).expect("Did not enter a correct string");
+    if let Some('\n')=s.chars().next_back() {
+        s.pop();
+    }
+    if let Some('\r')=s.chars().next_back() {
+        s.pop();
+    }
 
-    QrFS::new(mountpoint.clone());
+    QrFS::new(mountpoint.clone(),s.clone());
 }
